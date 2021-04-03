@@ -1,22 +1,85 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+/*      Header    */
+nav {
+  padding: 0;
+  background: black;
+  width: 100%;
+}
+ul {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+.header {
+  width: 100%;
+  justify-content: space-around;
+  padding: 2em 0;
+}
+ul li {
+  list-style-type: none;
+  padding: 0 .5em;
+}
+a {
+  color: white;
+  text-decoration: none;
+}
+
+/*Following lines to place footer the bottom*/
+#container {
+  min-height: 100%;
+  position: relative;
+}
+#body {
+  width: 100%;
+  text-align: center;
+  padding-bottom: 80px;
+}
+
+/*    Footer    */
+footer {
+  position: absolute;
+  bottom: 0;
+  height: 80px;
+  width: 100%;
+  background: black;
+  margin: 0;
+  padding: 1em 0;
+  color: white;
+  justify-content: space-around;
+}
+footer ul {
+  z-index: 100;
+  font-size: .8em;
+}
+/*END*/
+
+/*    Generic   */
 .flex {
   display: flex;
 }
-.row-center {
-  justify-content: center;
-  align-items: center;
+.row {
+  flex-direction: row;
 }
-.col-center {
-  flex-direction: column;
+.col {
+  flex-direction: row;
+}
+.center {
+  justify-content: center;
+}
+.align-center {
   align-items: center;
 }
 
 /*                FLASH                  */
 .flash {
+  width: 100%;
   justify-content: space-between;
   color: white;
-}
-.flash section {
-  width: 90%;
+  padding: 0 1em;
 }
 .success {
   background: rgb(0, 255, 0, 0.5);

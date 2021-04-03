@@ -11,9 +11,10 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-  <nav>
-    <ul>
-      <section>
+  <section id="container">
+  <nav> 
+    <ul class="header flex ">
+      <section class="flex row-center">
       <li><a href="/">Home</a></li>
       {% if not userid %}
       <li><a href="#about">About</a></li>
@@ -35,12 +36,10 @@
   <!--Flash Layout-->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <ul class="column-center" style="width: 100%">
+    <ul class="flex col center">
     {% for category, message in messages %}
-      <div class="flash row-center {{category}}">
-        <section class="row-center">
-          <p><strong>{{category}}</strong>: {{ message }} </p>
-        </section>
+      <div class="flash flex align-center {{category}}">
+        <p><strong>{{category}}</strong>: {{ message }} </p>
         <button onclick="closeFlash(this)">X</button>
       </div>
     {% endfor %}
@@ -48,9 +47,21 @@
   {% endif %}
 {% endwith %}
 
+  <section id="body">
   {% block content %}
   {% endblock %}
+  </section>
 
+  <footer class="flex align-center">
+    <p><strong>Mario Molinito</strong></p>
+    <ul>
+      <li>Home</li>
+      <li>About</li>
+      <li>Contact</li>
+    </ul>
+  </footer>
+
+  </section>
   <!--Scripts-->
   <script src="/static/js/main.js"></script>
 </body>

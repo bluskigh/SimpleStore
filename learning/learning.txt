@@ -82,3 +82,33 @@ introspection in computing is when a object knows about its properties at runtim
 For example, when you have a objects and call __name__ it would return the identifier of the function.
 
 But when dealing with decorators and getting __name__ it is going to return the inner function information, which is not we want when deocratinga function, this is where we can use functools wraps to preserve infromation of the original function.
+
+====
+Setting the footer to be at the bottom of the page (with content)
+
+Basic structure
+div#container
+  section#header
+  section#body
+  section#footer
+
+In order for this to work, make sure that you have the body to have a height of 100%
+html, body { height: 100%; }
+
+The container should have a positoin of relative, this will be used later for the footer which willl be positioned at the bottom of the container, relatively to the container.
+
+#container {
+  min-height: 100%; <- makes sure that the height will be at 100%
+  display: position;
+}
+#header {
+....
+}
+#body {
+  padding-bottom: 80px; <- the height of the footer
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  height: 80px;
+}
