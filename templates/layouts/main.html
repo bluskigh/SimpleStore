@@ -19,6 +19,11 @@
       {% if not userid %}
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
+      {% else %}
+      <li><a href="/products">Products</a></li>
+      <li><a href="/search">Search</a></li>
+      <li><a href="/orders">Orders</a></li>
+      <li><a href="/cart">Cart</a></li>
       {% endif %}
       </section>
       {% if not userid %} 
@@ -26,8 +31,9 @@
       <li><a href="/signin">Sign In</a> / <a href="/signup">Sign Up</a></li>
       </section>
       {% else %} 
-      <section>
+      <section class="flex row center">
       <li><a href="/signout">Sign Out</a></li>
+      <li><a href="/account">Account</a></li>
       </section>
       {% endif %} 
     </ul>

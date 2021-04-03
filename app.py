@@ -26,10 +26,31 @@ class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(), nullable=False)
   password = db.Column(db.String(), nullable=False)
+  # creating a one to many relationship here.
+  # - cascade all delete, means that when a User is deleted, then delete all of the products associated with the user.
+  children = db.relationship('Product', backref='user', cascade='all, delete')
+
+class Product(db.Model):
+    __tablename__ = 'products'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), nullable=True)
+    description = db.Column(db.String(), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    total_stock = db.Column(db.Integer, nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+# for ajax requests (have to be logged in)
+@logged_in
+def getProducts():
+    """Returns list of products on the whole page (no constraints)"""
+    pass
 
 @app.route('/')
 def index():
-  return render_template('/layouts/main.html', userid=session.get('userid'))
+  if session.get('userid'):
+      return render_template('/layouts/home.html', userid=session.get('userid'))
+  else:
+      return render_template('/layouts/main.html', userid=None)
 
 @app.route("/signup")
 @redirect_logged_in
@@ -99,7 +120,7 @@ def signin_submission():
       return redirect('/signin')
 
   # if successful flash user ;)
-  flash('You\'re now logged in. Welcome {username} :)', 'success')
+  flash(f'You\'re now logged in. Welcome {username} :)', 'success')
   # - sign in the user, redirect to home page
   session['userid'] = user.id
   session['username'] = username
@@ -112,5 +133,5 @@ def signout():
     # removing the user info from session "signed out"
     session.pop('userid')
     session.pop('username')
-    flash('You\'re not signed out', 'info')
+    flash('You\'re now signed out', 'info')
     return redirect('/')

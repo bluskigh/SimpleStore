@@ -9,7 +9,7 @@ secret_key = os.urandom(24)
 # specifies which type of session interface to use
 SESSION_TYPE = 'filesystem'
 SESSION_FILE_DIR = mkdtemp()
-SESSSION_PERMANENT = False
+SESSSION_PERMANENT = True
 
 # removes deprecation error on "flask run" or python3 app.p
 SQLALCHEMY_TRACK_MODIFICATIONS=False
