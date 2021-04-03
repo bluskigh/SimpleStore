@@ -1,0 +1,10 @@
+{% extends '/layouts/main.html' %}
+{% block title %} Sign In {% endblock %}
+{% block content %}
+<h1> Sign In </h1>
+<form action='/signin' method='POST'>
+  <input type='text' name='username' placeholder='Username here' required>
+  <input type='password' name='password' placeholder='Password here' required>
+  <button type='submit'>Submit</button>
+</form>
+{% endblock %}

@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--Styles-->
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+    <!--/Styles-->
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+  <nav>
+    <ul>
+      <section>
+      <li><a href="/">Home</a></li>
+      {% if not userid %}
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      {% endif %}
+      </section>
+      {% if not userid %} 
+      <section>
+      <li><a href="/signin">Sign In</a> / <a href="/signup">Sign Up</a></li>
+      </section>
+      {% else %} 
+      <section>
+      <li><a href="/signout">Sign Out</a></li>
+      </section>
+      {% endif %} 
+    </ul>
+  </nav>
+
+  <!--Flash Layout-->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="column-center" style="width: 100%">
+    {% for category, message in messages %}
+      <div class="flash row-center {{category}}">
+        <section class="row-center">
+          <p><strong>{{category}}</strong>: {{ message }} </p>
+        </section>
+        <button onclick="closeFlash(this)">X</button>
+      </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+  {% block content %}
+  {% endblock %}
+
+  <!--Scripts-->
+  <script src="/static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+.flex {
+  display: flex;
+}
+.row-center {
+  justify-content: center;
+  align-items: center;
+}
+.col-center {
+  flex-direction: column;
+  align-items: center;
+}
+
+/*                FLASH                  */
+.flash {
+  justify-content: space-between;
+  color: white;
+}
+.flash section {
+  width: 90%;
+}
+.success {
+  background: rgb(0, 255, 0, 0.5);
+}
+.info {
+  background: rgb(0, 0, 230, 0.5);
+}
+.error {
+  background: rgb(255, 0, 0, 0.5);
+}

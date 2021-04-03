@@ -1,0 +1,11 @@
+{% extends '/layouts/main.html' %}
+{% block title %} Sign Up {% endblock %}
+{% block content %}
+<h1> Sign Up </h1>
+<form action='/signup' method='POST'>
+  <input type='text' name='username' placeholder='Username here' required>
+  <input type='password' name='password' placeholder='Password here' required>
+  <input type='password' name='confirmation' placeholder='Re-type password here' required>
+  <button type='submit'>Submit</button>
+</form>
+{% endblock %}
