@@ -34,9 +34,10 @@ class Product(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable=True)
-    description = db.Column(db.String(), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    total_stock = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(), nullable=False, default='An item you can buy')
+    price = db.Column(db.Float, nullable=False, default=5.0)
+    total_stock = db.Column(db.Integer, nullable=False, default=1)
+    image_link = db.Column(db.String(), nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 # for ajax requests (have to be logged in)
@@ -151,7 +152,31 @@ def new_product():
 def new_product_submission():
     name = request.form.get('name')
     description = request.form.get('name')
+    price = request.form.get('price')
     total_stock = request.form.get('total_stock')
-    print(name, description, total_stock)
-    flash('lasjkdf', 'info')
+    image_link = request.form.get('image_link')
+
+    if not name or not description or not price or not total_stock or not image_link:
+        flash('Missing required field\'s. Try again.', 'error')
+        return redirect('/products/new')
+
+    # product cannot have duplicate name
+    result = db.session.query(Product).filter(Product.name.like(f'%{name}%')).first()
+    print(result)
+    if result:
+        flash('A product with that name already exist', 'error')
+        return redirect('/products/new')
+
+    try:
+        # add the product to the page
+        temp = Product(name=name, description=description, price=price, total_stock=total_stock, image_loink=image_link) 
+        db.session.add(temp)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        flash('Could not add the product to the database...Please try again', 'error')
+        return redirect('/products/new')
+
+    flash('Added the prodct to the database!', 'success')
     return redirect('/products')
