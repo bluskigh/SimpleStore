@@ -58,7 +58,7 @@ footer ul {
 /*END*/
 
 
-/* GENERAL  */
+/* PRODUCT */
 .button {
   background: blue;
   color: white;
@@ -67,23 +67,44 @@ footer ul {
 .button:hover {
   text-decoration: underline;
 }
+.owner {
+  border: none;
+  right: 0;
+  top: 0;
+  position: absolute;
+  padding: .7em 1em;
+  border-radius: 1em;
+  background: green;
+  color: white;
+}
+
 .product_view {
+  width: 25%;
+  position: relative;
   padding: .5em;
   border: 1px solid black;
-  border-radius: 1em%;
+  border-radius: 1em;
   text-align: left;
   justify-content: space-between;
 }
+.product_view p {
+  max-width: 100%;
+}
+
 .product_container {
   flex-wrap: wrap;
 }
+.new_products {
+  width: 60%;
+}
+/* END PRODUCT */
 
 /*                FLASH                  */
 .flash {
+  height: 5vh;
   width: 100%;
-  justify-content: space-between;
+  justify-content: space-around;
   color: white;
-  padding: 0 1em;
 }
 .success {
   background: rgb(0, 255, 0, 0.5);
@@ -110,6 +131,7 @@ footer ul {
 }
 .align-center {
   align-items: center;
+  margin: 0 auto;
 }
 h1,h2,h3,h4,h5,p {
   margin: 0;

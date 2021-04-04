@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import logged_in, redirect_logged_in, none_if_nexist, get_form_info
+from helpers import logged_in, redirect_logged_in, none_if_nexist
 
 # init our flask application 
 app = Flask(__name__)
@@ -130,11 +130,14 @@ def signin_submission():
 @app.route('/signout')
 @logged_in
 def signout():
-    # removing the user info from session "signed out"
-    session.pop('userid')
-    session.pop('username')
-    flash('You\'re now signed out', 'info')
-    return redirect('/')
+    if session.get('userid'):
+        # removing the user info from session "signed out"
+        session.clear()
+        flash('You\'re now signed out', 'success')
+        return redirect('/')
+    else:
+        flash('You are not signed in.', 'info')
+        return redirect('/') 
 
 ################################### Products route controllers 
 @app.route('/products')
@@ -149,9 +152,7 @@ def new_product():
     return render_template('/pages/new_product.html', userid=session.get('userid'))
 @app.route('/products/new', methods=['POST'])
 @logged_in
-@get_form_info
 def new_product_submission():
-    # TODO replce this line with get_form_info so don't have to do this everytime
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
@@ -163,14 +164,14 @@ def new_product_submission():
         return redirect('/products/new')
 
     # product cannot have duplicate name
-    result = db.session.query(Product).filter(Product.name.like(f'%{name}%') & userid==session.get('userid')).first()
+    result = db.session.query(Product).filter((Product.name.like(f'%{name}%')) & (Product.userid==session.get('userid'))).first()
     if result:
         flash('A product with that name already exist', 'error')
         return redirect('/products/new')
 
     try:
         # add the product to the page
-        temp = Product(name=name, description=description, price=price, total_stock=total_stock, image_link=image_link) 
+        temp = Product(name=name, description=description, price=price, total_stock=total_stock, image_link=image_link, userid=session.get('userid')) 
         db.session.add(temp)
         db.session.commit()
     except Exception as e:
@@ -183,6 +184,7 @@ def new_product_submission():
     return redirect('/products')
 @app.route('/products/<int:product_id>')
 def get_product_info(product_id):
+    """ Runs when \"see more \" is clicked displays more options for the item """
     product = db.session.query(Product).get(product_id)
 
     # check if product exist
@@ -191,12 +193,21 @@ def get_product_info(product_id):
         return redirect('/')
 
     # send back information about the product
+    return render_template('/pages/view_product.html', products=[product], userid=session.get('userid'))
+@app.route('/products/<int:product_id>/put')
+@logged_in
+def update_product(product_id):
+    """ Edit product page (only available fo the owner """
+    product = db.session.query(Product).get(product_id)
+    if product.userid != session.get('userid'):
+        flash('You\'re not the owner of this product.', 'error')
+        return redirect('/')
     return render_template('/pages/update_product.html', product=product)
+
 @app.route('/products/<int:product_id>/put', methods=['POST'])
 @logged_in
-@get_form_info
 def update_product_submission(product_id):
-    product = db.session.Query(Product).get(product_id)
+    product = db.session.query(Product).get(product_id)
 
     # check that the product exists
     if not product:
@@ -207,6 +218,32 @@ def update_product_submission(product_id):
     if product.userid != session.get('userid'):
         flash('You cannnot edit a product that does not belong to you.', 'error')
         return redirect('/')
-
     
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = request.form.get('price')
+    total_stock = request.form.get('total_stock')
+    image_link = request.form.get('image_link')
 
+    # only update the necessary things that need to be updated
+    if name != product.name:
+        product.name = name
+    if description != product.description:
+        product.description = description
+    if price != product.price:
+        product.price = price
+    if total_stock != product.total_stock:
+        product.total_stock = total_stock
+    if image_link != product.image_link:
+        product.image_link = image_link
+
+    try:
+        # commit transactions (updates)
+        db.session.commit()
+        flash('Updated your product!', 'success')
+        return redirect('/products')
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        flash('Could not updated your product. Try again.', 'error')
+        return redirect('/products/{{product_id}}/put')

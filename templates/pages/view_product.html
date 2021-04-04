@@ -1,0 +1,9 @@
+{% extends '/layouts/main.html' %}
+{% block title %} View Product | SimpleStore {% endblock %}
+{% block content %}
+<h1> View Product </h1>
+<p> Viewing information of product : {{products[0].name}} </p>
+<div class="product_container flex row center">
+{% include '/layouts/product_view.html' %}
+</div>
+{% endblock %}
