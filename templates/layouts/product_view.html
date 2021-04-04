@@ -1,11 +1,11 @@
 {% if products %}
-{% for products in products %}
+{% for product in products %}
 <div class="product_view flex col">
-  <img src="{{product.image_source}}" height="200px" width="200px">
+  <img src="{{product.image_link}}" height="200px" width="200px">
   <h2>{{product.name}}</h2>
   <p>{{product.description}}</p>
   <section class="flex row center align-center">
-    <p><strong>{{product.price}}</strong></p>
+    <p><strong>${{product.price}}</strong></p>
     <a href="/products/{{product.id}}" class="button">See More</a>
     {% if product.userid == userid %}
     <a href="/products/edit/{{product.id}}">Edit</a>

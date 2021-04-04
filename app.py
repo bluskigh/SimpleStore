@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import logged_in, redirect_logged_in, none_if_nexist
+from helpers import logged_in, redirect_logged_in, none_if_nexist, get_form_info
 
 # init our flask application 
 app = Flask(__name__)
@@ -149,9 +149,11 @@ def new_product():
     return render_template('/pages/new_product.html', userid=session.get('userid'))
 @app.route('/products/new', methods=['POST'])
 @logged_in
+@get_form_info
 def new_product_submission():
+    # TODO replce this line with get_form_info so don't have to do this everytime
     name = request.form.get('name')
-    description = request.form.get('name')
+    description = request.form.get('description')
     price = request.form.get('price')
     total_stock = request.form.get('total_stock')
     image_link = request.form.get('image_link')
@@ -161,15 +163,14 @@ def new_product_submission():
         return redirect('/products/new')
 
     # product cannot have duplicate name
-    result = db.session.query(Product).filter(Product.name.like(f'%{name}%')).first()
-    print(result)
+    result = db.session.query(Product).filter(Product.name.like(f'%{name}%') & userid==session.get('userid')).first()
     if result:
         flash('A product with that name already exist', 'error')
         return redirect('/products/new')
 
     try:
         # add the product to the page
-        temp = Product(name=name, description=description, price=price, total_stock=total_stock, image_loink=image_link) 
+        temp = Product(name=name, description=description, price=price, total_stock=total_stock, image_link=image_link) 
         db.session.add(temp)
         db.session.commit()
     except Exception as e:
@@ -180,3 +181,32 @@ def new_product_submission():
 
     flash('Added the prodct to the database!', 'success')
     return redirect('/products')
+@app.route('/products/<int:product_id>')
+def get_product_info(product_id):
+    product = db.session.query(Product).get(product_id)
+
+    # check if product exist
+    if not product:
+        flash('Hmm...Product does not exist anymore.', 'info')
+        return redirect('/')
+
+    # send back information about the product
+    return render_template('/pages/update_product.html', product=product)
+@app.route('/products/<int:product_id>/put', methods=['POST'])
+@logged_in
+@get_form_info
+def update_product_submission(product_id):
+    product = db.session.Query(Product).get(product_id)
+
+    # check that the product exists
+    if not product:
+        flash('Could not find this product in our database.', 'info')
+        return redirect(f'/products/{{product_id}}')
+
+    # check that the product contains the same userid as currently in session
+    if product.userid != session.get('userid'):
+        flash('You cannnot edit a product that does not belong to you.', 'error')
+        return redirect('/')
+
+    
+

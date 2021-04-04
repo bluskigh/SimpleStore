@@ -57,28 +57,12 @@ footer ul {
 }
 /*END*/
 
-/*    Generic   */
-.flex {
-  display: flex;
-}
-.row {
-  flex-direction: row;
-}
-.col {
-  flex-direction: row;
-}
-.center {
-  justify-content: center;
-}
-.align-center {
-  align-items: center;
-}
 
 /* GENERAL  */
 .button {
   background: blue;
   color: white;
-  padding: 2em 1em;
+  margin-left: 1em;
 }
 .button:hover {
   text-decoration: underline;
@@ -86,7 +70,7 @@ footer ul {
 .product_view {
   padding: .5em;
   border: 1px solid black;
-  border-radius: 50%;
+  border-radius: 1em%;
   text-align: left;
   justify-content: space-between;
 }
@@ -109,4 +93,25 @@ footer ul {
 }
 .error {
   background: rgb(255, 0, 0, 0.5);
+}
+
+/*    Generic   */
+.flex {
+  display: flex;
+}
+.row {
+  flex-direction: row;
+}
+.col {
+  flex-direction: column;
+}
+.center {
+  justify-content: center;
+}
+.align-center {
+  align-items: center;
+}
+h1,h2,h3,h4,h5,p {
+  margin: 0;
+  padding: 0;
 }
