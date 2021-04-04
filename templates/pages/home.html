@@ -1,4 +1,9 @@
-{% extends 'layouts/main.html' %}
-{% block title %}Home | Simple Store{% %}
+{% extends '/layouts/main.html' %}
+{% block title %}Home | Simple Store{% endblock %}
 {% block content %}
+<h1>Home</h1>
+<p>Visit all products available currently!</p>
+<div class="product_container flex row center">
+{% include '/layouts/product_view.html' %}
 {% endblock %}
+</div>

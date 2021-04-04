@@ -1,0 +1,8 @@
+{% extends '/layouts/main.html' %}
+{% block title %} Your Products {% endblock %}
+{% block content %} 
+<h1>Your Products</h1>
+<p> Click on your products to view / edit them</p>
+<a class="" href="/products/new">Add Product</a>
+{% include '/layouts/product_view.html' %}
+{% endblock %} 

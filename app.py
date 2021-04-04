@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import logged_in, redirect_logged_in
+from helpers import logged_in, redirect_logged_in, none_if_nexist
 
 # init our flask application 
 app = Flask(__name__)
@@ -37,18 +37,17 @@ class Product(db.Model):
     description = db.Column(db.String(), nullable=False)
     price = db.Column(db.Float, nullable=False)
     total_stock = db.Column(db.Integer, nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 # for ajax requests (have to be logged in)
-@logged_in
-def getProducts():
-    """Returns list of products on the whole page (no constraints)"""
-    pass
-
+    
 @app.route('/')
 def index():
+  session['userid'] = 1
+  session['username'] = 'mario'
   if session.get('userid'):
-      return render_template('/layouts/home.html', userid=session.get('userid'))
+    products = none_if_nexist(db.session.query(Product).all())
+    return render_template('/pages/home.html', userid=session.get('userid'), products=products)
   else:
       return render_template('/layouts/main.html', userid=None)
 
@@ -135,3 +134,24 @@ def signout():
     session.pop('username')
     flash('You\'re now signed out', 'info')
     return redirect('/')
+
+################################### Products route controllers 
+@app.route('/products')
+@logged_in
+def getProducts():
+    """ Shows all the users products / options """
+    products = none_if_nexist(db.session.query(Product).filter_by(userid=session.get('userid')).all())
+    return render_template('/pages/user_products.html', products=products)
+@app.route('/products/new')
+@logged_in
+def new_product():
+    return render_template('/pages/new_product.html', userid=session.get('userid'))
+@app.route('/products/new', methods=['POST'])
+@logged_in
+def new_product_submission():
+    name = request.form.get('name')
+    description = request.form.get('name')
+    total_stock = request.form.get('total_stock')
+    print(name, description, total_stock)
+    flash('lasjkdf', 'info')
+    return redirect('/products')

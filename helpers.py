@@ -20,3 +20,9 @@ def redirect_logged_in(func):
         # is not logged in, allow to sign up / sign in 
         return func(*args, **kwargs)
     return wrapper_
+
+def none_if_nexist(value):
+    """ Going to be used with filter queries. If the query return value is an empty list, then return none. """
+    if not len(value):
+        return None 
+    return value

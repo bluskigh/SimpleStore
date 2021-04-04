@@ -74,6 +74,26 @@ footer ul {
   align-items: center;
 }
 
+/* GENERAL  */
+.button {
+  background: blue;
+  color: white;
+  padding: 2em 1em;
+}
+.button:hover {
+  text-decoration: underline;
+}
+.product_view {
+  padding: .5em;
+  border: 1px solid black;
+  border-radius: 50%;
+  text-align: left;
+  justify-content: space-between;
+}
+.product_container {
+  flex-wrap: wrap;
+}
+
 /*                FLASH                  */
 .flash {
   width: 100%;

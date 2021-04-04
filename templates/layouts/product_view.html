@@ -1,0 +1,18 @@
+{% if products %}
+{% for products in products %}
+<div class="product_view flex col">
+  <img src="{{product.image_source}}" height="200px" width="200px">
+  <h2>{{product.name}}</h2>
+  <p>{{product.description}}</p>
+  <section class="flex row center align-center">
+    <p><strong>{{product.price}}</strong></p>
+    <a href="/products/{{product.id}}" class="button">See More</a>
+    {% if product.userid == userid %}
+    <a href="/products/edit/{{product.id}}">Edit</a>
+    {% endif %}
+  </section>
+</div>
+{% endfor %}
+{% else %}
+<p>Oh no...No available products in the whole store!</p>
+{% endif %}
