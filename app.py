@@ -50,7 +50,7 @@ class Cart(db.Model):
     # creating a one to one relationship between a cart and parent
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     # creating a one to many relationship between cart (parent) and children (products)
-    products = db.relationship('Product', secondary=cart_products, backref=db.backref('cart', lazy=True))
+    products = db.relationship('Product', secondary=cart_products, backref=db.backref('cart', lazy=True), cascade="all, delete")
 
 #-----------
 # Routes
