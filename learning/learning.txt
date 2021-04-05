@@ -112,3 +112,52 @@ The container should have a positoin of relative, this will be used later for th
   bottom: 0;
   height: 80px;
 }
+
+Database normalization, building the design of a database
+---
+One-to-One
+- a row in a table is related to only one role in another tbale and vice versa 
+- created using Primary key-unique foreign key constraints
+- Example? A human body can only have one functional working brain attached to it.
+
+CREATE TABLE Human 
+(id INT PRIMARY KEY,
+eyes INT,
+...)
+CREATE TABLE brain
+(id INT PRIMARY KEY,
+name VARCHAR(100),
+human_id INT FOREIGN KEY REFERENCES Human(id));
+
+One-to-Many
+- a row from one table can have multiple matching rows in another table 
+- created using a Primey key-foreign key relationship
+- example? Mother can have multiple children
+CREATE TABLE Mother (
+id INT PRIMARY KEY,
+name VARCHAR(100))
+CREATE TABLE Children (
+id INT PRIMARY KEY,
+name VARCHAR(100),
+mother_id INT FOREIGN KEY REFERENCES Mother(id)
+)
+
+Many-to-Many 
+- a row from one table can have multiple matching rows in another table, and a row in the other table can also have multiple matching rows in the first table 
+- created using a third table "junction table" or "assocation table"!!!!!!!!!!!!1
+
+CREATE TABLE Student(
+StudentID INT(10) PRIMARY KEY,
+Name VARCHAR(100),
+);
+CREATE TABLE Class(
+ClassID INT(10) PRIMARY KEY,
+Course VARCHAR(100),
+);
+CREATE TABLE StudentClassRelation(
+StudentID INT(15) NOT NULL,
+ClassID INT(14) NOT NULL,
+FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+FOREIGN KEY (ClassID) REFERENCES Class(ClassID),
+UNIQUE (StudentID, ClassID)
+);

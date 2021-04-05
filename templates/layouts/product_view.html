@@ -1,19 +1,14 @@
 {% if products %}
 {% for product in products %}
-<div class="product_view flex col">
-  {% if product.userid == userid %}
-  <button class="owner">Owner</button>
-  {% endif %} 
-  <img src="{{product.image_link}}" height="200px" width="200px">
+<div class="product_view flex col" name="{{product.id}}">
+  <div class="product_image" style="background: url('{{product.image_link}}');"></div>
   <h2>{{product.name}}</h2>
   <p>{{product.description}}</p>
-  <section class="flex row center align-center">
-    <p><strong>${{product.price}}</strong></p>
-    <a href="/products/{{product.id}}"><button>See More</button></a>
-    {% if product.userid == userid %}
-    <a href="/products/{{product.id}}/put">Edit</a>
-    {% endif %}
-  </section>
+  <p><strong>${{product.price}}</strong></p>
+  {% if product.userid == userid %}
+  <a href="/products/{{product.id}}/put"><button>Edit</button></a>
+  <button onclick="addToCart(this)">Add</button>
+  {% endif %}
 </div>
 {% endfor %}
 {% else %}

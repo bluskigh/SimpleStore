@@ -29,6 +29,7 @@ class User(db.Model):
   # creating a one to many relationship here.
   # - cascade all delete, means that when a User is deleted, then delete all of the products associated with the user.
   children = db.relationship('Product', backref='user', cascade='all, delete')
+  cart = db.relationship('Cart', backref='cart_user', cascade='all, delete')
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -40,12 +41,22 @@ class Product(db.Model):
     image_link = db.Column(db.String(), nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-# for ajax requests (have to be logged in)
-    
+cart_products = db.Table('cart_products', db.Column('cart_id', db.Integer, db.ForeignKey('cart.id')), db.Column('product_id', db.Integer, db.ForeignKey('products.id')))
+
+class Cart(db.Model):
+    __tablename__ = 'cart'
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, nullable=False) 
+    # creating a one to one relationship between a cart and parent
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # creating a one to many relationship between cart (parent) and children (products)
+    products = db.relationship('Product', secondary=cart_products, backref=db.backref('cart', lazy=True))
+
+#-----------
+# Routes
+#-----------
 @app.route('/')
 def index():
-  session['userid'] = 1
-  session['username'] = 'mario'
   if session.get('userid'):
     products = none_if_nexist(db.session.query(Product).all())
     return render_template('/pages/home.html', userid=session.get('userid'), products=products)
@@ -82,6 +93,9 @@ def signup_submission():
   password = generate_password_hash(password)
   temp = User(username=username, password=password)
   try:
+    # creating a cart for the current user
+    temp_cart = Cart(amount=0, user_id=session.get('userid'))
+    db.session.add(temp_cart)
     # adding to transaction in current session, INSERT
     db.session.add(temp)
     # committing the transaction to be saved
@@ -145,7 +159,7 @@ def signout():
 def getProducts():
     """ Shows all the users products / options """
     products = none_if_nexist(db.session.query(Product).filter_by(userid=session.get('userid')).all())
-    return render_template('/pages/user_products.html', products=products)
+    return render_template('/pages/user_products.html', products=products, userid=session.get('userid'))
 @app.route('/products/new')
 @logged_in
 def new_product():

@@ -79,7 +79,7 @@ footer ul {
 }
 
 .product_view {
-  width: 25%;
+  width: 200px;
   position: relative;
   padding: .5em;
   border: 1px solid black;
@@ -90,12 +90,21 @@ footer ul {
 .product_view p {
   max-width: 100%;
 }
-
+.product_view button {
+  display: inline-block;
+}
 .product_container {
   flex-wrap: wrap;
 }
 .new_products {
   width: 60%;
+}
+.product_image {
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 200px;
+  width: 200px;
 }
 /* END PRODUCT */
 
@@ -115,6 +124,21 @@ footer ul {
 .error {
   background: rgb(255, 0, 0, 0.5);
 }
+
+/*  Cart */
+.cart {
+  position: relative;
+
+}
+.cart_notif {
+  right: 0;
+  top: 0;
+  font-size: .7em;
+  position: absolute;
+  color: white;
+  background: red;
+}
+
 
 /*    Generic   */
 .flex {
