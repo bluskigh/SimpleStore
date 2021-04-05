@@ -3,7 +3,7 @@
 {% block content %}
 <h1>New Product</h1> 
 <p>This product will be created under your name!</p>
-<form action="/products/new" class="new_products" method="POST" class="flex col center align-center">
+<form action="/products/new" method="POST" class="new_products flex col center align-center">
   <input type="text" name="name" placeholder="Name" required>
   <input type="text" name="description" placeholder="Description" required>
   <input type="number" name="price" min="1" max="1000" step="0.01" placeholder="Price"  required>

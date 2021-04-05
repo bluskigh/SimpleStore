@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, session, flash, request, redirect
+from flask import Flask, render_template, session, flash, request, redirect, jsonify
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
@@ -29,7 +29,7 @@ class User(db.Model):
   # creating a one to many relationship here.
   # - cascade all delete, means that when a User is deleted, then delete all of the products associated with the user.
   products = db.relationship('Product', backref='user', cascade='all, delete')
-  cart = db.relationship('Cart', backref='cart_user', cascade='all, delete')
+  cart = db.relationship('Cart', backref='cart_user', cascade='all, delete', uselist=False)
 
 class Product(db.Model):
     __tablename__ = 'products'
@@ -96,12 +96,12 @@ def signup_submission():
   try:
     # adding to transaction in current session, INSERT
     db.session.add(temp)
-    # committing the transaction to be saved
-    db.session.commit()
     # creating a cart for the current user
     temp_cart = Cart(amount=0, user_id=temp.id)
     db.session.add(temp_cart)
     # flash user with success message, and redirect for user to sign in to acc
+    # committing the transaction to be saved
+    db.session.commit()
     flash('User created!', 'success')
     return redirect('/signin')
   except Exception as e:
@@ -218,7 +218,6 @@ def update_product(product_id):
         flash('You\'re not the owner of this product.', 'error')
         return redirect('/')
     return render_template('/pages/update_product.html', product=product)
-
 @app.route('/products/<int:product_id>/put', methods=['POST'])
 @logged_in
 def update_product_submission(product_id):
@@ -294,3 +293,24 @@ def delete_submission(account_id):
         flash('Could not delete your account. Try again.', 'error')
         return redirect('/account')
     
+#-----
+# Cart Routes
+#-----
+# api route (make ajax fetch request and or XMLHTTP)
+@app.route('/cart/amount')
+@logged_in
+def get_cart_amount():
+    try:
+        curr_user = db.session.query(User).get(session.get('userid'))
+        # TODO make logged_in decorator check for existing user, not just that the session contains a user
+        print("current user")
+        print(curr_user)
+        print(curr_user.cart.amount)
+        return jsonify({'amount': curr_user.cart.amount})
+    except Exception as e:
+        print(e)
+        flash('A problem occurred when attempting to get your cart amount', 'error')
+        return redirect('/')
+@app.route('/cart/add', methods=["POST"])
+def cart_add_submission():
+    pass

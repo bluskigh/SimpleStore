@@ -7,8 +7,8 @@
   <p><strong>${{product.price}}</strong></p>
   {% if product.userid == userid %}
   <a href="/products/{{product.id}}/put"><button>Edit</button></a>
-  <button onclick="addToCart(this)">Add</button>
   {% endif %}
+  <button onclick="addToCart(this)">Add</button>
 </div>
 {% endfor %}
 {% else %}
