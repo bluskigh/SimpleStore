@@ -1,0 +1,7 @@
+{% extends '/layouts/main.html' %}
+{% block title %}Account | SimpleStore{% endblock %}
+{% block content %}
+<form action="/account/{{userid}}/delete" method="POST">
+  <button type="submit" id="delete">Delete Account</button>
+</form>
+{% endblock %}

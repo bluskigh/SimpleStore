@@ -28,7 +28,7 @@ class User(db.Model):
   password = db.Column(db.String(), nullable=False)
   # creating a one to many relationship here.
   # - cascade all delete, means that when a User is deleted, then delete all of the products associated with the user.
-  children = db.relationship('Product', backref='user', cascade='all, delete')
+  products = db.relationship('Product', backref='user', cascade='all, delete')
   cart = db.relationship('Cart', backref='cart_user', cascade='all, delete')
 
 class Product(db.Model):
@@ -41,6 +41,7 @@ class Product(db.Model):
     image_link = db.Column(db.String(), nullable=False)
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+# association table for product and cart
 cart_products = db.Table('cart_products', db.Column('cart_id', db.Integer, db.ForeignKey('cart.id')), db.Column('product_id', db.Integer, db.ForeignKey('products.id')))
 
 class Cart(db.Model):
@@ -93,13 +94,13 @@ def signup_submission():
   password = generate_password_hash(password)
   temp = User(username=username, password=password)
   try:
-    # creating a cart for the current user
-    temp_cart = Cart(amount=0, user_id=session.get('userid'))
-    db.session.add(temp_cart)
     # adding to transaction in current session, INSERT
     db.session.add(temp)
     # committing the transaction to be saved
     db.session.commit()
+    # creating a cart for the current user
+    temp_cart = Cart(amount=0, user_id=temp.id)
+    db.session.add(temp_cart)
     # flash user with success message, and redirect for user to sign in to acc
     flash('User created!', 'success')
     return redirect('/signin')
@@ -261,3 +262,35 @@ def update_product_submission(product_id):
         db.session.rollback()
         flash('Could not updated your product. Try again.', 'error')
         return redirect('/products/{{product_id}}/put')
+
+#----------------
+# Account routes
+#----------------
+@app.route('/account')
+@logged_in
+def account():
+    return render_template('/pages/account.html', userid=session.get('userid'))
+@app.route('/account/<int:account_id>/delete', methods=['POST'])
+def delete_submission(account_id):
+    # find the account
+    user = db.session.query(User).get(account_id)
+    print(user)
+    if user.id != session.get('userid'):
+        flash('You\'re are not allowed to delete other users accounts', 'error')
+        # actually going to sign the particular person out
+        return redirect('/signout')
+    
+    try:
+        # delete the account
+        db.session.delete(user)
+        db.session.commit()
+        flash('Account Deleted.', 'success')
+        # clear the session
+        session.clear()
+        return redirect('/')
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        flash('Could not delete your account. Try again.', 'error')
+        return redirect('/account')
+    
