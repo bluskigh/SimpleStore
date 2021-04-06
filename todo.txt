@@ -1,0 +1,7 @@
+- When someone processes an order, tell deduce one from products stock!
+- - so when another use goes to buy the item he cannot because it is out of stock (this is already implemented)
+- - ALSO: include when someone has already had the item in their cart, and they go to buy processes the order, say "Sorry, could not finish transaction currently out of stock in {product.name}." allow them to either remove or wait until its in stock again.
+
+- Implement search.
+
+- Implement making an order.

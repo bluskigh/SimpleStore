@@ -314,29 +314,33 @@ def cart_add_submission():
     id_ = request.get_json('id')
     # TODO: turn this process of getting id into a decorator (used for remove too)
     if not id_:
-        return jsonify({'added': False})
+        return jsonify({'result': False})
     # add the id to the current users cart
     user = get_user_instance(db, User) 
     if not user:
-        return jsonify({'added': False})
+        return jsonify({'result': False})
+
+    product = db.session.query(Product).get(id_);
+    if product.total_stock == 0:
+        return jsonify({'result': False, 'message': f'Product "{product.name}" is out of STOCK!'})
     try:
         user.cart.products.append(db.session.query(Product).get(id_))
         user.cart.amount += 1
         db.session.commit()
-        return jsonify({'added': True})
+        return jsonify({'result': True})
     except Exception as e:
         print(e)
         db.session.rollback()
-        return jsonify({'added': False})
+        return jsonify({'result': False})
 @app.route('/cart/remove', methods=['POST'])
 @logged_in
 def cart_remove_submission():
     id_ = request.get_json('id')
     if not id_:
-        return jsonify({'removed': False})
+        return jsonify({'result': False})
     user = get_user_instance(db, User)
     if not user:
-        return jsonify({'added': False})
+        return jsonify({'result': False})
     try:
         # basically, we do not want to remove the product itself, because other users rely on it too. So intead, we want to remove the product from our assocation table called cart_products.
         # NOOOOOOOOOOOO
@@ -346,13 +350,13 @@ def cart_remove_submission():
         # TODO truly understand how you removed, like does remove take in instances of a query product class object? Also does remove() return the amoutns of items removed? 
         # TODO: say the user has multiple items of a thing, remove x amount of items only.
         db.session.commit()
-        return jsonify({'removed': True})
+        return jsonify({'result': True})
     except Exception as e:
         print(e)
         db.session.rollback()
         # vital
         db.session.close()
-        return jsonify({'removed': False})
+        return jsonify({'result': False})
     # TODO: think about relpacing removed / added into success, because it makes it more general, thus makes it easier to write decorator function
 
 @app.route('/cart/<int:product_id>/exist')

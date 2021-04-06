@@ -6,13 +6,14 @@
   <h2>{{product.name}}</h2>
   <p>{{product.description}}</p>
   <p><strong>${{product.price}}</strong></p>
+  <p><strong>In Stock:</strong>: {{product.total_stock}}</p>
   {% if product.userid == userid %}
   <a href="/products/{{product.id}}/put"><button>Edit</button></a>
   {% endif %}
   {% if url_for(request.endpoint) == '/cart'%}
   <button onclick="removeFromCart(this)">Remove</button>
   {% else %}
-  <button class="addProduct" disabled="True" onclick="addToCart(this)">Add</button>
+  <button class="addProduct {% if product.total_stock == 0 %} disabled {% endif %}" disabled="{% if product.total_stock != 0 %} True {% else %} False {% endif %}" onclick="addToCart(this)">Add</button>
   {% endif %}
 </div>
 {% endfor %}

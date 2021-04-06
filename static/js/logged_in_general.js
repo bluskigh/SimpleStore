@@ -30,13 +30,13 @@ function addToCart(obj) {
      })
     .then(async r => await r.json()) 
     .then((r) => {
-      if (r.added) {
+      if (r.result) {
         cart.innerText = (+cart.innerText) + 1;
         obj.disabled = true;
         obj.parentElement.querySelector(".inCart").classList.toggle("hidden");
         obj.classList.toggle("disabled");
       }else {
-        alert("There was an issue adding your item to the cart...Refresh and try again.");
+        alert(r.message);
       }
     })
 
@@ -60,7 +60,7 @@ function removeFromCart(obj) {
   })
   .then(async r => await r.json())
   .then((r) => { 
-    if (r.removed) {
+    if (r.result) {
       // decrement from cart
       cart.innerText = (+cart.innerText) - 1;
       obj.parentElement.parentElement.removeChild(obj.parentElement);
@@ -94,7 +94,6 @@ const determineInCart = async () => {
       var r = await fetch('/cart/'+ button.parentElement.getAttribute("name")+'/exist')
       r = await r.json();
       if (!r.result) {
-        button.disabled= false;
       } else {
         button.parentElement.querySelector(".inCart").classList.remove('hidden');
         // does exist in our cart, do not allow to add
