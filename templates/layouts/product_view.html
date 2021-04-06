@@ -13,7 +13,7 @@
   {% if url_for(request.endpoint) == '/cart'%}
   <button onclick="removeFromCart(this)">Remove</button>
   {% else %}
-  <button class="addProduct {% if product.total_stock == 0 %} disabled {% endif %}" disabled="{% if product.total_stock != 0 %} True {% else %} False {% endif %}" onclick="addToCart(this)">Add</button>
+  <button class="addProduct {% if product.total_stock == 0 %} disabled {% endif %}" onclick="addToCart(this)">Add</button>
   {% endif %}
 </div>
 {% endfor %}

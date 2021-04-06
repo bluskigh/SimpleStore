@@ -94,6 +94,7 @@ const determineInCart = async () => {
       var r = await fetch('/cart/'+ button.parentElement.getAttribute("name")+'/exist')
       r = await r.json();
       if (!r.result) {
+        button.disabled = false;
       } else {
         button.parentElement.querySelector(".inCart").classList.remove('hidden');
         // does exist in our cart, do not allow to add
