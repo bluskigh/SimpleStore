@@ -2,13 +2,18 @@
 {% for product in products %}
 <div class="product_view flex col" name="{{product.id}}">
   <div class="product_image" style="background: url('{{product.image_link}}');"></div>
+  <button class="inCart hidden">In Cart</button>
   <h2>{{product.name}}</h2>
   <p>{{product.description}}</p>
   <p><strong>${{product.price}}</strong></p>
   {% if product.userid == userid %}
   <a href="/products/{{product.id}}/put"><button>Edit</button></a>
   {% endif %}
-  <button onclick="addToCart(this)">Add</button>
+  {% if url_for(request.endpoint) == '/cart'%}
+  <button onclick="removeFromCart(this)">Remove</button>
+  {% else %}
+  <button class="addProduct" disabled="True" onclick="addToCart(this)">Add</button>
+  {% endif %}
 </div>
 {% endfor %}
 {% else %}

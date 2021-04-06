@@ -106,6 +106,12 @@ footer ul {
   height: 200px;
   width: 200px;
 }
+.inCart {
+  width: 100%;
+  background: blue;
+  color: white;
+  border: none;
+}
 /* END PRODUCT */
 
 /*                FLASH                  */
@@ -160,4 +166,13 @@ footer ul {
 h1,h2,h3,h4,h5,p {
   margin: 0;
   padding: 0;
+}
+.hidden {
+  display: none !important;
+}
+.disabled { 
+  opacity: 70%;
+}
+.disabled:hover {
+  cursor: not-allowed;
 }

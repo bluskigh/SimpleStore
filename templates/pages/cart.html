@@ -1,0 +1,18 @@
+{% extends '/layouts/main.html' %}
+{% block title %}Cart | SimpleStore{% endblock %}
+{% block content %}
+<h1>Cart</h1>
+<p>You can view products that you have added to your cart here</p>
+<div class="flex row center">
+{% if products %}
+{% include '/layouts/product_view.html' %}
+{% else %}
+<p>You do not have any products in your cart currently</p>
+{% endif %}
+</div>
+{% if products %}
+<form action="/cart/clear">
+  <button type="submit">Clear Cart</button>
+</form>
+{% endif %}
+{% endblock %}

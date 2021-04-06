@@ -303,19 +303,16 @@ def get_cart_amount():
     try:
         curr_user = get_user_instance(db, User)
         # TODO make logged_in decorator check for existing user, not just that the session contains a user
-        print("current user")
-        print(curr_user)
-        print(curr_user.cart.amount)
         return jsonify({'amount': curr_user.cart.amount})
     except Exception as e:
         print(e)
         flash('A problem occurred when attempting to get your cart amount', 'error')
         return redirect('/')
-
 @app.route('/cart/add', methods=["POST"])
 @logged_in
 def cart_add_submission():
     id_ = request.get_json('id')
+    # TODO: turn this process of getting id into a decorator (used for remove too)
     if not id_:
         return jsonify({'added': False})
     # add the id to the current users cart
@@ -331,3 +328,61 @@ def cart_add_submission():
         print(e)
         db.session.rollback()
         return jsonify({'added': False})
+@app.route('/cart/remove', methods=['POST'])
+@logged_in
+def cart_remove_submission():
+    id_ = request.get_json('id')
+    if not id_:
+        return jsonify({'removed': False})
+    user = get_user_instance(db, User)
+    if not user:
+        return jsonify({'added': False})
+    try:
+        # basically, we do not want to remove the product itself, because other users rely on it too. So intead, we want to remove the product from our assocation table called cart_products.
+        # NOOOOOOOOOOOO
+        total = user.cart.products.remove(db.session.query(Product).get(id_))
+        user.cart.amount -= 1
+
+        # TODO truly understand how you removed, like does remove take in instances of a query product class object? Also does remove() return the amoutns of items removed? 
+        # TODO: say the user has multiple items of a thing, remove x amount of items only.
+        db.session.commit()
+        return jsonify({'removed': True})
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        # vital
+        db.session.close()
+        return jsonify({'removed': False})
+    # TODO: think about relpacing removed / added into success, because it makes it more general, thus makes it easier to write decorator function
+
+@app.route('/cart/<int:product_id>/exist')
+@logged_in
+def exist_in_cart(product_id):
+    user = get_user_instance(db, User)
+    for product in user.cart.products:
+        if product.id == product_id:
+            return jsonify({'result': True}) 
+    return jsonify({'result': False})
+
+@app.route("/cart/clear")
+@logged_in
+def clear_cart():
+    try:
+        user = get_user_instance(db, User) 
+        for product in user.cart.products:
+            user.cart.products.remove(product)
+        user.cart.amount = 0
+        db.session.commit()
+        flash('Cleared your cart', 'success')
+        return redirect('/')
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        flash('Could not clear your cart', 'error')
+        return redirect('/cart')
+
+@app.route('/cart')
+@logged_in
+def cart():
+    user = get_user_instance(db, User)
+    return render_template('/pages/cart.html', products=user.cart.products, userid=session.get('userid'))
