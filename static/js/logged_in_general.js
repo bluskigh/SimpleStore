@@ -32,6 +32,9 @@ function addToCart(obj) {
     .then((r) => {
       if (r.added) {
         cart.innerText = (+cart.innerText) + 1;
+        obj.disabled = true;
+        obj.parentElement.querySelector(".inCart").classList.toggle("hidden");
+        obj.classList.toggle("disabled");
       }else {
         alert("There was an issue adding your item to the cart...Refresh and try again.");
       }
@@ -60,6 +63,7 @@ function removeFromCart(obj) {
     if (r.removed) {
       // decrement from cart
       cart.innerText = (+cart.innerText) - 1;
+      obj.parentElement.parentElement.removeChild(obj.parentElement);
     } else {
       // TODO: when failed refresh the page? So you can show a flash message instead ?
       alert("Could not remove ", id, " from your cart. Refreh and try again")

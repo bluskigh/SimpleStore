@@ -1,4 +1,4 @@
-import os
+# import os
 from flask import Flask, render_template, session, flash, request, redirect, jsonify
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
@@ -369,8 +369,13 @@ def exist_in_cart(product_id):
 def clear_cart():
     try:
         user = get_user_instance(db, User) 
-        for product in user.cart.products:
-            user.cart.products.remove(product)
+        products = user.cart.products
+        length = len(products)
+        # think about a pop() method but in a first in first out stack
+        # popping out first item until length is 0
+        while length > 0:
+            products.remove(products[0])
+            length-=1
         user.cart.amount = 0
         db.session.commit()
         flash('Cleared your cart', 'success')
