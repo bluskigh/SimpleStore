@@ -1,4 +1,4 @@
-# import os 
+# import os
 from flask import Flask, render_template, session, flash, request, redirect, jsonify
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
@@ -395,25 +395,3 @@ def clear_cart():
 def cart():
     user = get_user_instance(db, User)
     return render_template('/pages/cart.html', products=user.cart.products, userid=session.get('userid'))
-
-#----------
-# Search Routes
-#----------
-@app.route('/search')
-@logged_in
-def search():
-    query = request.args.get('query')
-    products = None
-    if query:
-        query = query.split(' ')
-        # query = '%'.join(word)
-        # related products when LIKE all the words in the query results in a none result.
-        for word in query:
-            word = f'%{word}%'
-            products = db.session.query(Product).filter(Product.name.like(word)).all()
-            if len(products):
-                break
-        # filter products
-        # products = db.session.query(Product).filter(Product.name.like(f'%{query}%')).all()
-        print(f'Products: {products}')
-    return render_template('/pages/search.html', userid=session.get('userid'), products=products)
