@@ -1,4 +1,4 @@
-const cart = document.querySelector(".cart");
+const cart = document.querySelector(".cart_notif");
 if (!cart) {
   alert("Could not find the cart");
 } else {

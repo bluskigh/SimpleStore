@@ -26,3 +26,6 @@ def none_if_nexist(value):
     if not len(value):
         return None 
     return value
+
+def get_user_instance(db, User):
+    return db.session.query(User).get(session.get('userid'))

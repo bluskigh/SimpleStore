@@ -4,7 +4,7 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import logged_in, redirect_logged_in, none_if_nexist
+from helpers import logged_in, redirect_logged_in, none_if_nexist, get_user_instance
 
 # init our flask application 
 app = Flask(__name__)
@@ -272,7 +272,7 @@ def account():
 @app.route('/account/<int:account_id>/delete', methods=['POST'])
 def delete_submission(account_id):
     # find the account
-    user = db.session.query(User).get(account_id)
+    user = get_user_instance(db, User)
     print(user)
     if user.id != session.get('userid'):
         flash('You\'re are not allowed to delete other users accounts', 'error')
@@ -301,7 +301,7 @@ def delete_submission(account_id):
 @logged_in
 def get_cart_amount():
     try:
-        curr_user = db.session.query(User).get(session.get('userid'))
+        curr_user = get_user_instance(db, User)
         # TODO make logged_in decorator check for existing user, not just that the session contains a user
         print("current user")
         print(curr_user)
@@ -311,6 +311,23 @@ def get_cart_amount():
         print(e)
         flash('A problem occurred when attempting to get your cart amount', 'error')
         return redirect('/')
+
 @app.route('/cart/add', methods=["POST"])
+@logged_in
 def cart_add_submission():
-    pass
+    id_ = request.get_json('id')
+    if not id_:
+        return jsonify({'added': False})
+    # add the id to the current users cart
+    user = get_user_instance(db, User) 
+    if not user:
+        return jsonify({'added': False})
+    try:
+        user.cart.products.append(db.session.query(Product).get(id_))
+        user.cart.amount += 1
+        db.session.commit()
+        return jsonify({'added': True})
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({'added': False})
