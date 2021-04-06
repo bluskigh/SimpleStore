@@ -405,15 +405,16 @@ def search():
     products = None
     if query:
         query = query.split(' ')
-        # related products when LIKE all the words in the query results in a none result.
-        products_query = db.session.query(Product).filter(Product.name.ilike(f'%{query[0]}%'))
-        if products_query:
-            for word in query[1:]:
-                word = f'%{word}%'
+        products_query = None
+        for word in query[1:]:
+            word = f'%{word}%'
+            if products_query:
                 temp = products_query.filter(Product.name.like(word))
                 if temp.first():
                     products_query = temp;
-            products = products_query.all()
+            else:
+                # related products when LIKE all the words in the query results in a none result.
+                products_query = db.session.query(Product).filter(Product.name.ilike(word))
 
-        print(f'Products: {products}')
+            products = products_query.all()
     return render_template('/pages/search.html', userid=session.get('userid'), products=products, query=query)
