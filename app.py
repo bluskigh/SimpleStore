@@ -415,6 +415,17 @@ def search():
             else:
                 # related products when LIKE all the words in the query results in a none result.
                 products_query = db.session.query(Product).filter(Product.name.ilike(word))
+                if products_query.first() == None:
+                    products_query = None
 
+        if products_query:
             products = products_query.all()
+        else:
+            # since the template being rendered after a search checks the length of the query, we need to pass an empty array, otherwise passing an products var with None, will just render the search option again.
+            products = []
     return render_template('/pages/search.html', userid=session.get('userid'), products=products, query=query)
+
+@app.errorhandler(404)
+def others(e):
+    return render_template('/pages/error.html'), 404
+# TODO add more custom error handlers

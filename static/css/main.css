@@ -47,7 +47,6 @@ footer {
   width: 100%;
   background: black;
   margin: 0;
-  padding: 1em 0;
   color: white;
   justify-content: space-around;
 }
@@ -95,6 +94,8 @@ footer ul {
 }
 .product_container {
   flex-wrap: wrap;
+  justify-content: space-around;
+  width: 100%;
 }
 .new_products {
   width: 60%;
@@ -175,4 +176,7 @@ h1,h2,h3,h4,h5,p {
 }
 .disabled:hover {
   cursor: not-allowed;
+}
+button:hover {
+  cursor: pointer; 
 }
