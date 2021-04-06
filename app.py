@@ -417,3 +417,4 @@ def search():
         # products = db.session.query(Product).filter(Product.name.like(f'%{query}%')).all()
         print(f'Products: {products}')
     return render_template('/pages/search.html', userid=session.get('userid'), products=products)
+#
